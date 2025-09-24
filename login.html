@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroAI - 智能神经网络平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'PingFang SC', '微软雅黑', system-ui, -apple-system, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 0 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        .form {
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            height: 48px;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #f9fafb;
+            font-size: 16px;
+            color: #111827;
+            transition: all 200ms ease-out;
+        }
+
+        .form-group input::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border: 2px solid #2563eb;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-group input.error {
+            border: 2px solid #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            color: #6b7280;
+            font-size: 18px;
+            line-height: 1;
+            transition: color 200ms ease-out;
+        }
+
+        .password-toggle:hover {
+            color: #374151;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 2px 0 0 0;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper label {
+            font-size: 14px;
+            color: #374151;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .checkbox-wrapper a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .checkbox-wrapper a:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            height: 48px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 200ms ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #1d4ed8;
+        }
+
+        .submit-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .divider {
+            text-align: center;
+            margin: 24px 0;
+            position: relative;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider span {
+            background: #ffffff;
+            padding: 0 16px;
+            position: relative;
+        }
+
+        .switch-link {
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .switch-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 4px;
+        }
+
+        .switch-link a:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .success-message {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-banner {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .header {
+                margin-bottom: 28px;
+            }
+
+            .form-group {
+                margin-bottom: 18px;
+            }
+        }
+
+        /* 无障碍设计 */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 登录表单 -->
+        <div id="loginForm" class="form-container">
+            <div class="header">
+                <h1>登录 NeuroAI</h1>
+                <p>智能神经网络平台</p>
+            </div>
+
+            <div class="success-message" id="loginSuccess"></div>
+            <div class="error-banner" id="loginError"></div>
+
+            <form class="form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">电子邮箱</label>
+                    <input 
+                        type="email" 
+                        id="loginEmail" 
+                        name="email"
+                        placeholder="输入您的电子邮箱" 
+                        required
+                        autocomplete="email"
+                    >
+                    <div class="error-message" id="loginEmailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">密码</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="loginPassword" 
+                            name="password"
+                            placeholder="输入您的密码" 
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                            👁️
+                        </button>
+                    </div>
+                    <div class="error-message" id="loginPasswordError"></div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="loginBtn">
+                    <div class="loading" id="loginLoading"></div>
+                    <span id="loginBtnText">登录</span>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>或</span>
+            </div>
+
+            <div class="switch-link">
+                <span>还没有账户？</span>
+                <a href="#" onclick="switchToRegister()">去注册</a>
+            </div>
+        </div>
+
+        <!-- 注册表单 -->
+        <div id="registerForm" class="form-container hidden">
+            <div class="header">
+                <h1>注册 NeuroAI</h1>
+                <p>创建您的智能神经网络账户</p>
+            </div>
+
+            <div class="success-message" id="registerSuccess"></div>
+            <div class="error-banner" id="registerError"></div>
+
+            <form class="form" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerName">用户名</label>
+                    <input 
+                        type="text" 
+                        id="registerName" 
+                        name="username"
+                        placeholder="输入您的用户名" 
+                        required
+                        minlength="2"
+                        maxlength="20"
+                        autocomplete="username"
+                    >
+                    <div class="error-message" id="registerNameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">电子邮箱</label>
+                    <input 
+                        type="email" 
+                        id="registerEmail" 
+                        name="email"
+                        placeholder="输入您的电子邮箱" 
+                        required
+                        autocomplete="email"
+                    >
+                    <div class="error-message" id="registerEmailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">密码</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="registerPassword" 
+                            name="password"
+                            placeholder="输入您的密码" 
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                        >
+                        <button type="button" class="password-toggle" onclick="togglePassword('registerPassword')">
+                            👁️
+                        </button>
+                    </div>
+                    <div class="error-message" id="registerPasswordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">确认密码</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword"
+                            placeholder="再次输入密码" 
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                        >
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                            👁️
+                        </button>
+                    </div>
+                    <div class="error-message" id="confirmPasswordError"></div>
+                </div>
+
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                    <label for="agreeTerms">
+                        我同意 <a href="#" target="_blank">用户协议</a> 和 <a href="#" target="_blank">隐私政策</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn" id="registerBtn">
+                    <div class="loading" id="registerLoading"></div>
+                    <span id="registerBtnText">创建账户</span>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>或</span>
+            </div>
+
+            <div class="switch-link">
+                <span>已有账户？</span>
+                <a href="#" onclick="switchToLogin()">去登录</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentForm = 'login';
+
+        // 表单切换函数
+        function switchToLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            currentForm = 'login';
+            clearMessages();
+            document.title = '登录 - NeuroAI';
+        }
+
+        function switchToRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+            currentForm = 'register';
+            clearMessages();
+            document.title = '注册 - NeuroAI';
+        }
+
+        // 密码显示切换
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const button = input.nextElementSibling;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+
+        // 清除所有消息
+        function clearMessages() {
+            const messages = document.querySelectorAll('.success-message, .error-banner, .error-message');
+            messages.forEach(msg => {
+                msg.style.display = 'none';
+                msg.textContent = '';
+            });
+            
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => input.classList.remove('error'));
+        }
+
+        // 显示错误消息
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+        }
+
+        // 显示成功消息
+        function showSuccess(elementId, message) {
+            const successElement = document.getElementById(elementId);
+            if (successElement) {
+                successElement.textContent = message;
+                successElement.style.display = 'block';
+            }
+        }
+
+        // 设置加载状态
+        function setLoading(formType, isLoading) {
+            const btn = document.getElementById(formType + 'Btn');
+            const loading = document.getElementById(formType + 'Loading');
+            const text = document.getElementById(formType + 'BtnText');
+            
+            if (isLoading) {
+                btn.disabled = true;
+                loading.style.display = 'block';
+                text.textContent = '处理中...';
+            } else {
+                btn.disabled = false;
+                loading.style.display = 'none';
+                text.textContent = formType === 'login' ? '登录' : '创建账户';
+            }
+        }
+
+        // 邮箱验证
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // 密码强度检查
+        function validatePassword(password) {
+            return password.length >= 6;
+        }
+
+        // 登录表单处理
+        async function handleLogin(event) {
+            event.preventDefault();
+            clearMessages();
+
+            const formData = new FormData(event.target);
+            const email = formData.get('email').trim();
+            const password = formData.get('password');
+
+            let hasError = false;
+
+            // 验证邮箱
+            if (!email) {
+                showError('loginEmailError', '请输入电子邮箱');
+                document.getElementById('loginEmail').classList.add('error');
+                hasError = true;
+            } else if (!validateEmail(email)) {
+                showError('loginEmailError', '请输入有效的电子邮箱地址');
+                document.getElementById('loginEmail').classList.add('error');
+                hasError = true;
+            }
+
+            // 验证密码
+            if (!password) {
+                showError('loginPasswordError', '请输入密码');
+                document.getElementById('loginPassword').classList.add('error');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            setLoading('login', true);
+
+            try {
+                // 模拟API调用
+                await simulateAPI();
+                
+                // 登录成功
+                showSuccess('loginSuccess', '登录成功！正在跳转...');
+                
+                // 模拟跳转到主页面
+                setTimeout(() => {
+                    alert('登录成功！\n用户: ' + email + '\n即将跳转到主页面...');
+                    // 实际项目中这里应该是: window.location.href = '/dashboard';
+                }, 1000);
+
+            } catch (error) {
+                showError('loginError', error.message || '登录失败，请重试');
+            } finally {
+                setLoading('login', false);
+            }
+        }
+
+        // 注册表单处理
+        async function handleRegister(event) {
+            event.preventDefault();
+            clearMessages();
+
+            const formData = new FormData(event.target);
+            const username = formData.get('username').trim();
+            const email = formData.get('email').trim();
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirmPassword');
+            const agreeTerms = formData.get('agreeTerms');
+
+            let hasError = false;
+
+            // 验证用户名
+            if (!username) {
+                showError('registerNameError', '请输入用户名');
+                document.getElementById('registerName').classList.add('error');
+                hasError = true;
+            } else if (username.length < 2) {
+                showError('registerNameError', '用户名至少需要2个字符');
+                document.getElementById('registerName').classList.add('error');
+                hasError = true;
+            } else if (username.length > 20) {
+                showError('registerNameError', '用户名不能超过20个字符');
+                document.getElementById('registerName').classList.add('error');
+                hasError = true;
+            }
+
+            // 验证邮箱
+            if (!email) {
+                showError('registerEmailError', '请输入电子邮箱');
+                document.getElementById('registerEmail').classList.add('error');
+                hasError = true;
+            } else if (!validateEmail(email)) {
+                showError('registerEmailError', '请输入有效的电子邮箱地址');
+                document.getElementById('registerEmail').classList.add('error');
+                hasError = true;
+            }
+
+            // 验证密码
+            if (!password) {
+                showError('registerPasswordError', '请输入密码');
+                document.getElementById('registerPassword').classList.add('error');
+                hasError = true;
+            } else if (!validatePassword(password)) {
+                showError('registerPasswordError', '密码至少需要6个字符');
+                document.getElementById('registerPassword').classList.add('error');
+                hasError = true;
+            }
+
+            // 验证确认密码
+            if (!confirmPassword) {
+                showError('confirmPasswordError', '请确认密码');
+                document.getElementById('confirmPassword').classList.add('error');
+                hasError = true;
+            } else if (password !== confirmPassword) {
+                showError('confirmPasswordError', '两次输入的密码不一致');
+                document.getElementById('confirmPassword').classList.add('error');
+                hasError = true;
+            }
+
+            // 验证协议同意
+            if (!agreeTerms) {
+                showError('registerError', '请同意用户协议和隐私政策');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            setLoading('register', true);
+
+            try {
+                // 模拟API调用
+                await simulateAPI();
+                
+                // 注册成功
+                showSuccess('registerSuccess', '注册成功！请前往登录页面');
+                
+                // 3秒后自动切换到登录页面
+                setTimeout(() => {
+                    switchToLogin();
+                }, 3000);
+
+            } catch (error) {
+                showError('registerError', error.message || '注册失败，请重试');
+            } finally {
+                setLoading('register', false);
+            }
+        }
+
+        // 模拟API调用
+        function simulateAPI() {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // 90%概率成功，10%概率失败 (用于演示)
+                    if (Math.random() > 0.1) {
+                        resolve({ success: true });
+                    } else {
+                        reject(new Error('网络连接失败，请检查网络后重试'));
+                    }
+                }, 1500);
+            });
+        }
+
+        // 输入框失焦验证
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.classList.remove('error');
+                    const errorId = this.id + 'Error';
+                    const errorElement = document.getElementById(errorId);
+                    if (errorElement) {
+                        errorElement.style.display = 'none';
+                    }
+                });
+
+                input.addEventListener('blur', function() {
+                    // 简单的失焦验证
+                    if (this.required && !this.value.trim()) {
+                        this.classList.add('error');
+                    }
+                });
+            });
+
+            // 密码匹配实时检查
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const registerPasswordInput = document.getElementById('registerPassword');
+            
+            if (confirmPasswordInput && registerPasswordInput) {
+                confirmPasswordInput.addEventListener('input', function() {
+                    if (this.value && registerPasswordInput.value && this.value !== registerPasswordInput.value) {
+                        this.classList.add('error');
+                        showError('confirmPasswordError', '密码不一致');
+                    } else {
+                        this.classList.remove('error');
+                        document.getElementById('confirmPasswordError').style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        // 键盘快捷键支持
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                clearMessages();
+            }
+        });
+    </script>
+</body>
+</html>
